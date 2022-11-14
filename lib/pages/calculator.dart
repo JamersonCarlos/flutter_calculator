@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class Calculator extends StatefulWidget {
@@ -9,10 +11,13 @@ class Calculator extends StatefulWidget {
 
 class _CalculatorState extends State<Calculator> {
   String displayText = "";
+  List<String> operatores = ["+", "-", "/", "%", "x"];
+  int countOperations = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey,
       body: Center(
         child: Card(
           margin:
@@ -38,6 +43,10 @@ class _CalculatorState extends State<Calculator> {
                       child: Text(
                         displayText,
                         textAlign: TextAlign.right,
+                        style: const TextStyle(
+                            fontSize: 24,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -109,7 +118,7 @@ class _CalculatorState extends State<Calculator> {
                   createButton(
                       elementButton: "3", colorButton: const Color(0xFF71dbd2)),
                   createButton(
-                      elementButton: "/",
+                      elementButton: "x",
                       colorButton: const Color(0xFF1f6764),
                       paddingRight: 10,
                       fontSize: 30),
@@ -148,6 +157,34 @@ class _CalculatorState extends State<Calculator> {
     );
   }
 
+  void updateDisplay(String contentButton) {
+    setState(() {
+      if (operatores.any((element) => element == contentButton) &&
+          countOperations < 1) {
+        countOperations += 1;
+        displayText += contentButton;
+      } else if (!operatores.any((element) => element == contentButton)) {
+        countOperations = 0;
+        displayText += contentButton;
+      }
+    });
+  }
+
+  void clearDisplay() {
+    setState(() {
+      displayText = "";
+    });
+  }
+
+  void lastDelete() {
+    setState(() {
+      displayText = displayText.substring(0, displayText.length - 1);
+    });
+  }
+
+  //Calculo do resultado
+  void viewResultDisplay() {}
+
   Widget createButton(
       {required String elementButton,
       required Color colorButton,
@@ -160,21 +197,48 @@ class _CalculatorState extends State<Calculator> {
           left: paddingLeft ?? 0,
           right: paddingRight ?? 0,
           bottom: paddingBottom ?? 0),
-      child: Container(
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: colorButton,
-        ),
-        child: Center(
-          child: Text(
-            elementButton,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: fontSize ?? 22,
-              fontWeight: FontWeight.w700,
-            ),
+      child: GestureDetector(
+        onTap: (() {
+          elementButton = elementButton.toLowerCase();
+          switch (elementButton) {
+            case "ac":
+              clearDisplay();
+              break;
+            case "delet":
+              if (displayText.isNotEmpty) {
+                lastDelete();
+              }
+              break;
+            case "=":
+              viewResultDisplay();
+              break;
+            default:
+              updateDisplay(elementButton);
+              break;
+          }
+        }),
+        child: Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: colorButton,
+          ),
+          child: Center(
+            child: elementButton != "delet"
+                ? Text(
+                    elementButton,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: fontSize ?? 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )
+                : const Icon(
+                    Icons.delete_outline,
+                    color: Colors.white,
+                    size: 30,
+                  ),
           ),
         ),
       ),
