@@ -21,8 +21,8 @@ class _CalculatorState extends State<Calculator> {
       body: Center(
         child: Card(
           margin:
-              const EdgeInsets.only(top: 100, bottom: 100, left: 10, right: 10),
-          color: const Color(0xFFd0eaa3),
+              const EdgeInsets.only(top: 80, bottom: 80, left: 10, right: 10),
+          color: const Color(0xFF3CA6A6),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -57,12 +57,12 @@ class _CalculatorState extends State<Calculator> {
                 children: [
                   createButton(
                       elementButton: "AC",
-                      colorButton: const Color(0xFF1f6764),
+                      colorButton: const Color(0xFF012E40),
                       paddingLeft: 10),
                   createButton(
-                      elementButton: "%", colorButton: const Color(0xFF1f6764)),
+                      elementButton: "%", colorButton: const Color(0xFF012E40)),
                   createButton(
-                      elementButton: "/", colorButton: const Color(0xFF1f6764)),
+                      elementButton: "/", colorButton: const Color(0xFF012E40)),
                   createButton(
                       elementButton: "delet",
                       colorButton: Colors.red,
@@ -83,7 +83,7 @@ class _CalculatorState extends State<Calculator> {
                       elementButton: "9", colorButton: const Color(0xFF71dbd2)),
                   createButton(
                       elementButton: "+",
-                      colorButton: const Color(0xFF1f6764),
+                      colorButton: const Color(0xFF012E40),
                       paddingRight: 10,
                       fontSize: 30),
                 ],
@@ -101,7 +101,7 @@ class _CalculatorState extends State<Calculator> {
                       elementButton: "6", colorButton: const Color(0xFF71dbd2)),
                   createButton(
                       elementButton: "-",
-                      colorButton: const Color(0xFF1f6764),
+                      colorButton: const Color(0xFF012E40),
                       paddingRight: 10,
                       fontSize: 30),
                 ],
@@ -119,7 +119,7 @@ class _CalculatorState extends State<Calculator> {
                       elementButton: "3", colorButton: const Color(0xFF71dbd2)),
                   createButton(
                       elementButton: "x",
-                      colorButton: const Color(0xFF1f6764),
+                      colorButton: const Color(0xFF012E40),
                       paddingRight: 10,
                       fontSize: 30),
                 ],
@@ -144,7 +144,7 @@ class _CalculatorState extends State<Calculator> {
                   ),
                   createButton(
                       elementButton: "=",
-                      colorButton: const Color(0xFF1f6764),
+                      colorButton: const Color(0xFF012E40),
                       paddingRight: 10,
                       fontSize: 30,
                       paddingBottom: 20),
