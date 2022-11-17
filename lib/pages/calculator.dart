@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 class Calculator extends StatefulWidget {
   const Calculator({super.key});
@@ -11,8 +10,13 @@ class Calculator extends StatefulWidget {
 
 class _CalculatorState extends State<Calculator> {
   String displayText = "";
-  List<String> operatores = ["+", "-", "/", "%", "x"];
+  List<String> operatores = const ["+", "-", "/", "%", "x"];
   int countOperations = 0;
+  final List<double> _bufferMemory = [0, 0];
+  String? _operation;
+  bool _usedOperation = false;
+  String result = '';
+  int bufferIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -157,33 +161,79 @@ class _CalculatorState extends State<Calculator> {
     );
   }
 
-  void updateDisplay(String contentButton) {
+  void updateDisplay({required String contentButton}) {
     setState(() {
-      if (operatores.any((element) => element == contentButton) &&
-          countOperations < 1) {
-        countOperations += 1;
-        displayText += contentButton;
-      } else if (!operatores.any((element) => element == contentButton)) {
-        countOperations = 0;
-        displayText += contentButton;
-      }
+      displayText += contentButton;
+      result += contentButton;
     });
   }
 
   void clearDisplay() {
     setState(() {
       displayText = "";
+      countOperations = 0;
+      _usedOperation = false;
+      result = '';
+      bufferIndex = 0;
+      _bufferMemory.setAll(0, [0, 0]);
     });
   }
 
   void lastDelete() {
     setState(() {
+      if (operatores.contains(displayText[displayText.length - 1])) {
+        countOperations = 0;
+      }
       displayText = displayText.substring(0, displayText.length - 1);
     });
   }
 
+  void setOperation(String operation) {
+    if (displayText.isNotEmpty && countOperations < 1) {
+      setState(() {
+        displayText += operation;
+        countOperations++;
+        _bufferMemory[bufferIndex] = double.parse(result);
+        _usedOperation = true;
+        _operation = operation;
+        bufferIndex = 1;
+        result = '';
+      });
+    }
+  }
+
   //Calculo do resultado
-  void viewResultDisplay() {}
+  void viewResultDisplay() {
+    if (result == '' || _usedOperation == false) return;
+    _bufferMemory[bufferIndex] = double.parse(result);
+    setState(() {
+      if (_operation == "+") {
+        displayText = (_bufferMemory[0] + _bufferMemory[1]).toString();
+      } else if (_operation == '-') {
+        displayText = (_bufferMemory[0] - _bufferMemory[1]).toString();
+      } else if (_operation == '/' && _bufferMemory[1] != 0) {
+        displayText = (_bufferMemory[0] / _bufferMemory[1]).toString();
+      } else if (_operation == '*') {
+        displayText = (_bufferMemory[0] * _bufferMemory[1]).toString();
+      } else {
+        displayText = (_bufferMemory[0] % _bufferMemory[1]).toString();
+      }
+    });
+  }
+
+  void applyCommand(String command) {
+    if (command == "ac") {
+      clearDisplay();
+    } else if (command == "delet") {
+      lastDelete();
+    } else if (operatores.contains(command)) {
+      setOperation(command);
+    } else if (command == '=') {
+      viewResultDisplay();
+    } else {
+      updateDisplay(contentButton: command);
+    }
+  }
 
   Widget createButton(
       {required String elementButton,
@@ -200,22 +250,7 @@ class _CalculatorState extends State<Calculator> {
       child: GestureDetector(
         onTap: (() {
           elementButton = elementButton.toLowerCase();
-          switch (elementButton) {
-            case "ac":
-              clearDisplay();
-              break;
-            case "delet":
-              if (displayText.isNotEmpty) {
-                lastDelete();
-              }
-              break;
-            case "=":
-              viewResultDisplay();
-              break;
-            default:
-              updateDisplay(elementButton);
-              break;
-          }
+          applyCommand(elementButton);
         }),
         child: Container(
           width: 80,
